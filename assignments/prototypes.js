@@ -71,6 +71,42 @@ Humanoid.prototype.greet = function(){
 }
 
 
+const Villain = function(object){
+  CharacterStats.call(this,object);
+  GameObject.call(this,object); 
+  Humanoid.call(this,object);
+  this.bad = object.bad;
+  
+  
+}
+
+Villain.prototype = Object.create(Humanoid.prototype);
+
+Villain.prototype.attack = function(attackedCharacter){
+  attackedCharacter.healthPoints = attackedCharacter.healthPoints - 5;
+  console.log(`${this.name} attacked ${attackedCharacter.name} who lost 5 health points! ${attackedCharacter.name} now has ${attackedCharacter.healthPoints} health points!`);
+  if (attackedCharacter.healthPoints<1){
+    console.log(attackedCharacter.destroy());
+  }
+}
+
+const Hero = function(object){
+  CharacterStats.call(this,object);
+  GameObject.call(this,object); 
+  Humanoid.call(this,object);
+  this.good = object.good;
+  
+}
+
+Hero.prototype = Object.create(Humanoid.prototype);
+
+Hero.prototype.attack = function(attackedCharacter){
+  attackedCharacter.healthPoints = attackedCharacter.healthPoints - 5;
+  console.log(`${this.name} attacked ${attackedCharacter.name} who lost 5 health points! ${attackedCharacter.name} now has ${attackedCharacter.healthPoints} health points!`);
+  if (attackedCharacter.healthPoints<1){
+    console.log(attackedCharacter.destroy());
+  }
+}
  
 /*
   * Inheritance chain: GameObject -> CharacterStats -> Humanoid
@@ -131,6 +167,40 @@ Humanoid.prototype.greet = function(){
     language: 'Elvish',
   });
 
+  const superman = new Hero({
+    createdAt: new Date(),
+    dimensions: {
+      length: 1,
+      width: 3,
+      height: 4,
+    },
+    healthPoints: 10,
+    name: 'Superman',
+    team: 'Superheroes',
+    weapons: [
+      'Fist',
+      'Cape',
+    ],
+    language: 'English',
+  });
+
+  const godzilla = new Villain({
+    createdAt: new Date(),
+    dimensions: {
+      length: 80,
+      width: 40,
+      height: 100,
+    },
+    healthPoints: 100,
+    name: 'Gojira',
+    team: 'Monsters',
+    weapons: [
+      'Fire Breath',
+      'Stomp',
+    ],
+    language: 'Rawr',
+  });
+
   console.log(mage.createdAt); // Today's date
   console.log(archer.dimensions); // { length: 1, width: 2, height: 4 }
   console.log(swordsman.healthPoints); // 15
@@ -141,6 +211,8 @@ Humanoid.prototype.greet = function(){
   console.log(archer.greet()); // Lilith offers a greeting in Elvish.
   console.log(mage.takeDamage()); // Bruce took damage.
   console.log(swordsman.destroy()); // Sir Mustachio was removed from the game. 
+  godzilla.attack(superman);
+  godzilla.attack(superman);
 
 
   // Stretch task: 
