@@ -15,6 +15,15 @@
   * dimensions (These represent the character's size in the video game)
   * destroy() // prototype method that returns: `${this.name} was removed from the game.`
 */
+const GameObject = function(object){
+  this.createdAt = object.createdAt;
+  this.name = object.name;
+  this.dimensions = object.dimensions;
+}
+  
+GameObject.prototype.destroy = function(){
+  return `${this.name} was removed from the game.`;
+}
 
 /*
   === CharacterStats ===
@@ -22,6 +31,20 @@
   * takeDamage() // prototype method -> returns the string '<object name> took damage.'
   * should inherit destroy() from GameObject's prototype
 */
+
+const CharacterStats = function(object){
+  this.healthPoints = object.healthPoints;
+  GameObject.call(this,object);
+  
+}
+  
+CharacterStats.prototype = Object.create(GameObject.prototype);
+
+CharacterStats.prototype.takeDamage = function(){
+    return `${this.name} took damage.`;
+}
+
+
 
 /*
   === Humanoid (Having an appearance or character resembling that of a human.) ===
@@ -32,6 +55,58 @@
   * should inherit destroy() from GameObject through CharacterStats
   * should inherit takeDamage() from CharacterStats
 */
+
+const Humanoid = function(object){
+  this.team = object.team;
+  this.weapons = object.weapons;
+  this.language = object.language;
+  CharacterStats.call(this,object);
+  GameObject.call(this,object); 
+}
+
+Humanoid.prototype = Object.create(CharacterStats.prototype);
+
+Humanoid.prototype.greet = function(){
+  return `${this.name} offers a greeting in ${this.language}`;
+}
+
+
+const Villain = function(object){
+  CharacterStats.call(this,object);
+  GameObject.call(this,object); 
+  Humanoid.call(this,object);
+  this.bad = object.bad;
+  
+  
+}
+
+Villain.prototype = Object.create(Humanoid.prototype);
+
+Villain.prototype.attack = function(attackedCharacter){
+  attackedCharacter.healthPoints = attackedCharacter.healthPoints - 5;
+  console.log(`${this.name} attacked ${attackedCharacter.name} who lost 5 health points! ${attackedCharacter.name} now has ${attackedCharacter.healthPoints} health points!`);
+  if (attackedCharacter.healthPoints<1){
+    console.log(attackedCharacter.destroy());
+  }
+}
+
+const Hero = function(object){
+  CharacterStats.call(this,object);
+  GameObject.call(this,object); 
+  Humanoid.call(this,object);
+  this.good = object.good;
+  
+}
+
+Hero.prototype = Object.create(Humanoid.prototype);
+
+Hero.prototype.attack = function(attackedCharacter){
+  attackedCharacter.healthPoints = attackedCharacter.healthPoints - 5;
+  console.log(`${this.name} attacked ${attackedCharacter.name} who lost 5 health points! ${attackedCharacter.name} now has ${attackedCharacter.healthPoints} health points!`);
+  if (attackedCharacter.healthPoints<1){
+    console.log(attackedCharacter.destroy());
+  }
+}
  
 /*
   * Inheritance chain: GameObject -> CharacterStats -> Humanoid
@@ -41,7 +116,7 @@
 
 // Test you work by un-commenting these 3 objects and the list of console logs below:
 
-/*
+
   const mage = new Humanoid({
     createdAt: new Date(),
     dimensions: {
@@ -92,6 +167,40 @@
     language: 'Elvish',
   });
 
+  const superman = new Hero({
+    createdAt: new Date(),
+    dimensions: {
+      length: 1,
+      width: 3,
+      height: 4,
+    },
+    healthPoints: 10,
+    name: 'Superman',
+    team: 'Superheroes',
+    weapons: [
+      'Fist',
+      'Cape',
+    ],
+    language: 'English',
+  });
+
+  const godzilla = new Villain({
+    createdAt: new Date(),
+    dimensions: {
+      length: 80,
+      width: 40,
+      height: 100,
+    },
+    healthPoints: 100,
+    name: 'Gojira',
+    team: 'Monsters',
+    weapons: [
+      'Fire Breath',
+      'Stomp',
+    ],
+    language: 'Rawr',
+  });
+
   console.log(mage.createdAt); // Today's date
   console.log(archer.dimensions); // { length: 1, width: 2, height: 4 }
   console.log(swordsman.healthPoints); // 15
@@ -101,8 +210,10 @@
   console.log(archer.language); // Elvish
   console.log(archer.greet()); // Lilith offers a greeting in Elvish.
   console.log(mage.takeDamage()); // Bruce took damage.
-  console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
-*/
+  console.log(swordsman.destroy()); // Sir Mustachio was removed from the game. 
+  godzilla.attack(superman);
+  godzilla.attack(superman);
+
 
   // Stretch task: 
   // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.  
